@@ -1,6 +1,22 @@
 const largeur = 800;
 const hauteur = 600;
-const marges = 25 
+const marges = 25;
+
+//interface bouton + choix des dates 
+
+let input = document.createElement("input")
+document.body.appendChild(input)
+let bouton = document.createElement("button")
+document.body.appendChild(bouton)
+bouton.innerHTML="Choisir"
+let espace = document.createElement("br")
+document.body.appendChild(espace)
+input.type = "date"
+input.min = "2025-01-01"
+input.max = "2025-12-31"
+input.label = "Date"
+
+
 
 const svg = d3
 .select("body")
