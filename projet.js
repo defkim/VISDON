@@ -18,6 +18,8 @@ input.label = "Date"
 
 
 
+
+
 const svg = d3
 .select("body")
 .append("svg")
@@ -25,13 +27,26 @@ const svg = d3
 .attr("height", hauteur)
 .style("border", "1px solid black");
 
+let données_suisse, données_cantons, données_stations
+
 //importation des données
 d3.json("swiss_general_map.json").then((suisse)=>{
     d3.json("swiss_kanton_map.json").then((canton_ch)=>{d3.csv("canton_meteo.csv").then((d_station)=>{
 dessiner(suisse,canton_ch,d_station);
+//Choix de la date 
+bouton.addEventListener("click", () =>{
+    const recup_date_choisie = input.value
+    const date_du_jour = d_station.filter (d => d.date.startsWith(recup_date_choisie))
+    svg.selectAll("*").remove()
+    dessiner (suisse, canton_ch, date_du_jour)
+    console.log("date choisie:", recup_date_choisie);
+    console.log("données trouvées:", date_du_jour);
+    
+})
 });
 });
 })
+
 
 //Création d'un tableau pour convertir données des différents fichier 
 
@@ -48,7 +63,7 @@ const conversion = {
     "GR": "Graubünden",
     "JU": "Jura",
     "LU": "Luzern",
-    "NE": "Neuenburg",
+    "NE": "Neuchâtel",
     "NW": "Nidwalden",
     "OW": "Obwalden",
     "SG": "St. Gallen",
@@ -61,7 +76,8 @@ const conversion = {
     "VD": "Vaud",
     "VS": "Valais",
     "ZG": "Zug",
-    "ZH": "Zürich"
+    "ZH": "Zürich",
+    "GR":"Graubünden",
 }
 
 // tooltip avec info température max.,min. et moyenne
@@ -73,8 +89,6 @@ var tooltip = d3
 .style("background-color", "white")
 .style("border", "solid")
 .style ("position", "absolute")
-
-
 
 function dessiner(suisse,cantons,d_station){
 
@@ -186,6 +200,10 @@ const colorScale=d3.scaleLinear()
 
     
 }
+
+
+
+
 
 
 
