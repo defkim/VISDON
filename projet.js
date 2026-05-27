@@ -128,7 +128,7 @@ d_station.forEach(d=>{
 //couleur des cantons en fonction de la température moyenne du jour choisi 
 
 const colorScale=d3.scaleLinear()
-    .domain([d3.min(d_station , d =>d.tavg), d3.max(d_station, d => d.tavg)])
+    .domain([d3.min(d_station , d =>d.tmin), d3.max(d_station, d => d.tmax)])
     .range(["#00cfff", "#ff0000"])
 
     //carte suisse
@@ -181,7 +181,8 @@ const colorScale=d3.scaleLinear()
     .attr("fill", "blue")
     .on("mouseover", function (e,d){
         tooltip.html(
-            "<b>Station</b> :" + d.ville +
+            "<b>Canton</b>:" + d.canton +
+            "<br><b>Station</b> :" + d.ville +
             "<br><b>T.max</b> :" + d.tmax + "C°" +
             "<br><b>T.min</b> :" + d.tmin + "C°" +
             "<br><b>T.moyenne</b> :" + d.tavg + "C°"
@@ -190,9 +191,11 @@ const colorScale=d3.scaleLinear()
         .style ("left", (e.pageX + 15) +"px")
         .style ("top", (e.pageY + 15) +"px")
         .style("stroke", "black")
-        .style("stroke-width", "3")
-        .style ("stroke-opacity","1")
-        .style("opacity", 0.6)
+        .style("stroke-width", "1")
+        .style ("stroke-opacity","2")
+        .style("opacity", 0.7)
+        .style("border-radius", "10px")
+        .style("padding", "8px")
     })
     .on("mouseout", function (){
         tooltip.style ("opacity", 0)
