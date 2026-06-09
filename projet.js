@@ -32,6 +32,7 @@ input.type = "date"
 input.min = "2025-01-01"
 input.max = "2025-12-31"
 input.label = "Date"
+input.value="2025-01-01"
 
 
 
@@ -42,6 +43,13 @@ const svg = d3
 .append("svg")
 .attr("width", largeur)
 .attr("height", hauteur)
+
+const svg_2 = d3
+.select("body")
+.append("svg")
+.attr("width", largeur)
+.attr("height", hauteur)
+.style("border", "1px solid black");
 //.style("border", "1px solid black");
 
 let données_suisse, données_cantons, données_stations
@@ -55,9 +63,8 @@ bouton.addEventListener("click", () =>{
     const recup_date_choisie = input.value
     const date_du_jour = d_station.filter (d => d.date.startsWith(recup_date_choisie))
     svg.selectAll("*").remove()
+    svg_2.selectAll("*").remove()
     dessiner (suisse, canton_ch, date_du_jour)
-    console.log("date choisie:", recup_date_choisie);
-    console.log("données trouvées:", date_du_jour);
     
 })
 });
@@ -127,8 +134,12 @@ function dessiner(suisse,cantons,d_station){
         d.tmin =+d.tmin;
         d.tmax =+d.tmax;
         d.tavg =+d.tavg;
+        d.prcp = d.prcp?+d.prcp:0;// conversion des précipitations
+
+    
         
     });
+    
 
     //Création d'un tableau avec données tmoyenne pour ColorScale 
 
@@ -172,11 +183,8 @@ const colorScale=d3.scaleLinear()
     .join("path")
     .attr("d",pathGenerator)
     .attr("fill",(d) =>{
-        const temp = tavgCanton[d.properties.NAME]
-        return temp!==undefined? colorScale(temp) : "#cccccc"
-    })
-
-    
+        const temp = tavgCanton[d.properties.NAME];
+    return temp!==undefined? colorScale(temp): "#cccccc"})
     .attr("stroke","black")
     .attr("stroke-width", "2")
     .attr("stroke-opacity","0.5")
@@ -194,7 +202,7 @@ const colorScale=d3.scaleLinear()
     .join("circle")
     .attr("cx", d=>projection([d.longitude, d.latitude])[0])
     .attr("cy", d=>projection([d.longitude,d.latitude])[1])
-    .attr("r",5)
+    .attr("r",7)
     .attr("fill", "blue")
     .on("mouseover", function (e,d){
         tooltip.html(
@@ -219,25 +227,55 @@ const colorScale=d3.scaleLinear()
         tooltip.style ("opacity", 0)
     })
 
-    
-}
 
-//HISTOGRAMME PRECIPITATION
+
+    
+
+
+//HISTOGRAMME
 
 //interface générale 
-let titre_precipitation = document.createElement("h2")
-document.body.appendChild(titre_precipitation)
-titre_precipitation.innerHTML="HISTOGRAMME"
-titre_precipitation.style.fontFamily = "arial"
+//let titre_histogramme = document.createElement("h2")
+//document.body.appendChild(titre_histogramme)
+//titre_histogramme.innerHTML="HISTOGRAMME DES PRECIPITATIONS"
+//titre_histogramme.style.fontFamily = "arial"
 
 //projet 2
 
-const svg_2 = d3
-.select("body")
-.append("svg")
-.attr("width", largeur)
-.attr("height", hauteur)
-.style("border", "1px solid black");
+const temp = svg_2.append("g")
+const cant = svg_2.append("g")
+
+d_station.sort((a,b) => a.canton.localeCompare(b.canton))
+
+const espacement = 28;
+const marge_gauche = 40;
+
+temp
+.selectAll("rect")
+.data(d_station)
+.enter()
+.append("rect")
+.attr("x",(d,i)=> i*espacement+marge_gauche)
+.attr("y",(d)=>500-(d.prcp*10))
+.attr("width",18)
+.attr("height", (d)=>(d.prcp*10))
+.attr("fill","aquamarine")
+
+
+cant
+.selectAll("text")
+.data(d_station)
+.join("text")
+.text((d)=>d.canton)
+.attr("x",(d,i)=> i*espacement+marge_gauche+9)
+.attr("y", 520)
+.attr("font-family", "arial")
+.attr("font-size", "12px")
+.attr("text-anchor", "middle")
+.attr("fill","black")
+
+}
+
 
 
 
