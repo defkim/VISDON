@@ -2,15 +2,32 @@ const largeur = 800;
 const hauteur = 600;
 const marges = 25;
 
-//interface bouton + choix des dates 
+//mise en page générale 
+let titre = document.createElement("h1")
+document.body.appendChild(titre)
+titre.innerHTML="Données météorologiques 2025"
+titre.style.textAlign="center"
+titre.style.fontFamily = "arial"
+let espace = document.createElement("br")
+document.body.appendChild(espace)
+
+//HEAT MAP
+
+
+//interface, bouton + choix des dates 
+
+let titre_heatMap = document.createElement("h2")
+document.body.appendChild(titre_heatMap)
+titre_heatMap.innerHTML="HEAT MAP"
+titre_heatMap.style.fontFamily = "arial"
 
 let input = document.createElement("input")
 document.body.appendChild(input)
 let bouton = document.createElement("button")
 document.body.appendChild(bouton)
-bouton.innerHTML="Choisir"
-let espace = document.createElement("br")
-document.body.appendChild(espace)
+bouton.innerHTML="Choisir une date"
+let espace_1 = document.createElement("br")
+document.body.appendChild(espace_1)
 input.type = "date"
 input.min = "2025-01-01"
 input.max = "2025-12-31"
@@ -25,7 +42,7 @@ const svg = d3
 .append("svg")
 .attr("width", largeur)
 .attr("height", hauteur)
-.style("border", "1px solid black");
+//.style("border", "1px solid black");
 
 let données_suisse, données_cantons, données_stations
 
@@ -142,7 +159,7 @@ const colorScale=d3.scaleLinear()
     .attr("d",pathGenerator)
     .attr("fill","none")
     .attr("stroke","black")
-    .attr("strike-width","1.5")
+    .attr("stroke-width","1.5")
 
     //carte canton
     
@@ -196,6 +213,7 @@ const colorScale=d3.scaleLinear()
         .style("opacity", 0.7)
         .style("border-radius", "10px")
         .style("padding", "8px")
+
     })
     .on("mouseout", function (){
         tooltip.style ("opacity", 0)
@@ -203,6 +221,25 @@ const colorScale=d3.scaleLinear()
 
     
 }
+
+//HISTOGRAMME PRECIPITATION
+
+//interface générale 
+let titre_precipitation = document.createElement("h2")
+document.body.appendChild(titre_precipitation)
+titre_precipitation.innerHTML="HISTOGRAMME"
+titre_precipitation.style.fontFamily = "arial"
+
+//projet 2
+
+const svg_2 = d3
+.select("body")
+.append("svg")
+.attr("width", largeur)
+.attr("height", hauteur)
+.style("border", "1px solid black");
+
+
 
 
 
