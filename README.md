@@ -1,7 +1,7 @@
 # Données météorologiques 2025
 
 ## Description du processus d'obtention des données
-Dans un premier temps les données furent récupérés par l'intermédiaire de ce site [météo]. Chaque canton est représenté par une station météorologique et se télécharge en un fichier csv. Il y a un fichier par canton. Pourtant, il a été constaté que si les données initiales établissaient une station par chef-lieux, au moment où il a été question d'y ajouter les latitudes et longitudes, le site [météo suisse](https://www.meteosuisse.admin.ch/services-et-publications/applications/valeurs-mesurees.html#param=messwerte-lufttemperatur-10min&station=DAV&table=false) ne trouvait pas les-dites stations. Il a donc fallu prendre de nouvelles stations des cantons en question.
+Dans un premier temps les données furent récupérés par l'intermédiaire de ce site [météo stat](https://meteostat.net/fr/). Chaque canton est représenté par une station météorologique et se télécharge en un fichier csv. Il y a un fichier par canton. Pourtant, il a été constaté que si les données initiales établissaient une station par chef-lieux, au moment où il a été question d'y ajouter les latitudes et longitudes, le site [météo suisse](https://www.meteosuisse.admin.ch/services-et-publications/applications/valeurs-mesurees.html#param=messwerte-lufttemperatur-10min&station=DAV&table=false) ne trouvait pas les-dites stations. Il a donc fallu prendre de nouvelles stations des cantons en question.
 
 ## Présentation des données
 Les données finales se présentent sous forme de tableau dans un fichier csv : "canton_meteo.csv". Ce fichier de 9490 lignes est le produit de l'assemblage des 26 fichiers cantonaux. Il contient 16 colonnes :
@@ -32,7 +32,11 @@ La constance des données sélectionnées réside dans la datation. Chaque canto
 ## Étapes de pré-traitement des données
 Le pré-traitement des données se résume par l'ajout de colonnes mentionné précédemment, ainsi que le changement effectué pour certaines stations, ne trouvant les coordonnées des stations de chef-lieux.
 
+Dans un deuxième temps, nous avons du établir dans notre code un tableau de conversion des données car les noms des cantons dans notre tableau csv ne correspondait pas avec les données permettant de dessiner la carte de la Suisse (notamment des noms en suisse-allemand).
+
 ## Expliquer les visualisations produites
+La heat map permet de visualiser les écarts de températures entre chaque canton sur le territoire de la suisse en fonction du jour sélectionné pour l'année 2025. Le gradient de couleur utiliser est le rouge pour les températures chaudes et le bleu pour les températures froides cf.[image_couleur_hm]. Un tooltip à également été créé afin d'avoir des informations supplémentaire comme le nom du canton, la température maximale et minimale ce jour-ci et également la température moyenne qui a été utilisée pour déterminer la couleur du canton cf.[image_tooltip_hm]. 
+
 Une spider-chart fut créée, dans le but de visualiser les moyennes de *wspd*, *wpgt*, *pres* et *tsun*, du canton sélectionné au préalable, ainsi que le mois choisi. Lorsque l'utilisateur percoit la chart, il se retrouve avec deux axes, qui indiquent quatre mesures différentes. Les noms inscrits à côté de leurs extrémités correspondantes diffèrent du nom de colonnes originales, pour une meilleure compréhension des données. L'image [image_axes] présente les valeurs de *wspd* sous *Vent*; *wpgt* sous *Rafale de Vent*; *pres* sous *Pression*; *tsun* sous *Ensoleillement*.
 
 Les 4 cercles de la spider-chart représente une échelle représentant, du plus petit au plus grand cercle, 25, 50, 75 et 100%. Si cette échelle s'applique pour les quatres mesures, leurs données très disparatre d'une colonne à une autre impliquèrent l'utilisation d'une échelle pour chaque mesure. Le 100% représente la valeur maximale d'une colonne. Si initialement, le principe était d'utiliser la valeure minimale comme point de départ dans la visualisation, il s'avère que cela créait des problèmes, puisque cela ne prenait pas en compte les cases sans données, cf.[image_problème]. Ainsi la valeur minimale fut établie à 0.
@@ -43,10 +47,15 @@ Pour expliciter la visualisation des données, une étiquette *tooltip* visible 
 
 Pour aller plus en profondeur, il aurait été envisageable d'indiquer les mesures minimales et maximales mensuelles de chaque mesure, ou encore d'ajouter le dessin d'un polygone annuel représentant le canton sélectionné. 
 
+L'histogramme représente les précipitations dans chaque canton en fonction du mois choisi. La hauteur des barres représentent l'importance de celles-ci. 
+
+
 ![image_axes](spider_image_axe.png)
 ![image_problème](spider_problèmedonnées.png)
 ![image_sanscourbe](spider_sanscourbe.png)
 ![image_étiquette](spider_tooltip.png)
+![image_couleur_hm](image_couleur_hm.png)
+![image_tooltip_hm](image_tooltip_hm.png)
 
 
 ## Utilisation des IA génératives
@@ -58,3 +67,6 @@ Pour ce qui est de la structure de la spider-chart, ou encore du *tooltip*, des 
 [site_spider_chart](https://yangdanny97.github.io/blog/2019/03/01/D3-Spider-Chart)
 [site_tooltip](https://d3-graph-gallery.com/graph/interactivity_tooltip.html)
 [site_mouseover](https://medium.com/@kj_schmidt/show-data-on-mouse-over-with-d3-js-3bf598ff8fc2)
+
+Concernant la heat map, les informations de mise en page de l'interface comme l'affichage du calendrier, format des dates, etc. proviennent directement du site de la librairie D3. 
+[site D3](https://d3js.org/)
