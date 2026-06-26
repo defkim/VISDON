@@ -44,23 +44,17 @@ const svg = d3
 .attr("width", largeur)
 .attr("height", hauteur)
 
-const svg_2 = d3
-.select("body")
-.append("svg")
-.attr("width", largeur)
-.attr("height", hauteur)
-.style("border", "1px solid black");
-//.style("border", "1px solid black");
-
 let données_suisse, données_cantons, données_stations
 
 //importation des données
 d3.json("swiss_general_map.json").then((suisse)=>{
     d3.json("swiss_kanton_map.json").then((canton_ch)=>{d3.csv("canton_meteo.csv").then((d_station)=>{
-dessinerCarte(suisse,canton_ch,d_station);
+    dessinerCarte(suisse,canton_ch,d_station);
+    dessinerSpider(d_station);
+    dessinerHistogramme(d_station);
 //Choix de la date 
 bouton.addEventListener("click", () =>{
-    const recup_date_choisie = input.value
+    const recup_date_choisie = input.value;
     const date_du_jour = d_station.filter (d => d.date.startsWith(recup_date_choisie))
     svg.selectAll("*").remove()
     svg_2.selectAll("*").remove()
@@ -150,6 +144,9 @@ d_station.forEach(d=>{
     if (conv) tavgCanton[conv] = d.tavg
 })
 
+
+
+
     
 
 
@@ -161,7 +158,7 @@ const colorScale=d3.scaleLinear()
 
     //carte suisse
 
-    const pays = svg.append("g")
+    const pays = svg.append("g");
 
     pays
     .selectAll("path")
@@ -175,7 +172,7 @@ const colorScale=d3.scaleLinear()
     //carte canton
     
 
-    const canton =svg.append("g")
+    const canton =svg.append("g");
 
     canton
     .selectAll("path")
@@ -227,58 +224,11 @@ const colorScale=d3.scaleLinear()
         tooltipCarte.style ("opacity", 0)
     })
 
+};
 
-
-    
-
-
-//HISTOGRAMME
-
-//interface générale 
-//let titre_histogramme = document.createElement("h2")
-//document.body.appendChild(titre_histogramme)
-//titre_histogramme.innerHTML="HISTOGRAMME DES PRECIPITATIONS"
-//titre_histogramme.style.fontFamily = "arial"
-
-//projet 2
-
-const temp = svg_2.append("g")
-const cant = svg_2.append("g")
-
-d_station.sort((a,b) => a.canton.localeCompare(b.canton))
-
-const espacement = 28;
-const marge_gauche = 40;
-
-temp
-.selectAll("rect")
-.data(d_station)
-.enter()
-.append("rect")
-.attr("x",(d,i)=> i*espacement+marge_gauche)
-.attr("y",(d)=>500-(d.prcp*10))
-.attr("width",18)
-.attr("height", (d)=>(d.prcp*10))
-.attr("fill","aquamarine")
-
-
-cant
-.selectAll("text")
-.data(d_station)
-.join("text")
-.text((d)=>d.canton)
-.attr("x",(d,i)=> i*espacement+marge_gauche+9)
-.attr("y", 520)
-.attr("font-family", "arial")
-.attr("font-size", "12px")
-.attr("text-anchor", "middle")
-.attr("fill","black")
-
-}
-
+//VISUALISATION NUMÉRO 2
 
 //SPIDER-CHART
-
 let titre_SpiderChart = document.createElement("h2")
 document.body.appendChild(titre_SpiderChart)
 titre_SpiderChart.innerHTML="Spider-Chart"
@@ -314,7 +264,7 @@ const svg_3 = d3
     .attr("height", hauteur)
     .style("border", "1px solid black");
 
-const canton = svg_3.append("g");
+const cantonspid = svg_3.append("g");
 d3.csv("canton_meteo.csv").then(dessinerSpider);
 
 //échelle pour la grille
@@ -415,9 +365,9 @@ svg_3.selectAll(".axislabel")
     );
 
 // on doit faire une fonction qui va permettre de faire une moyenne des données, pour avoir un polygone qui représente le mois sélectionné du canton choisi. Sinon, on pourrait faire jour par jour mais en sachant que certains résultats sont null ou équivalent à 0, c'est moins intéressant.
-function calamoyenne (données, canton, mois){
+function calamoyenne (données, cantonspid, mois){
     let selection = données.filter (d =>
-        d.canton == canton &&
+        d.canton == cantonspid &&
         new Date(d.date).getMonth()+1 == +mois //ligne avec formule new Date générée par IA prcq d'autres formules trouvées sur internet ne marchaient pas
     ); //ajouter plus un, sinon janvier est compté comme 0
     return {
@@ -462,7 +412,7 @@ function dessinerSpider (data){
     let line = d3.line()
         .x(d => d.x)
         .y(d => d.y);
-    let colors = ["green"]; //il n'y a qu'une seule couleur parce que pour l'instant il s'agit de faire un polygone faisant une moyenne du mois, mais il aurait été possible d'en faire un autre servant de rappel annuel.
+    let colors = ["steelblue"]; //il n'y a qu'une seule couleur parce que pour l'instant il s'agit de faire un polygone faisant une moyenne du mois, mais il aurait été possible d'en faire un autre servant de rappel annuel.
 
     // supprime l'ancien polygone
     svg_3.selectAll("path").remove();
@@ -496,14 +446,14 @@ function dessinerSpider (data){
             .attr("cx", d => d.coords.x)
             .attr("cy", d => d.coords.y)
             .attr("r", 6)
-            .attr("fill", "green")
-            .attr("stroke", "darkgreen")
+            .attr("fill", "steelblue")
+            .attr("stroke", "blue")
             .attr("stroke-width", 2)
             .on("mouseover", (event, d) => {
                 tooltipSpider
                 .style("visibility", "visible")
                 .style("opacity", 1)
-                .html(`Moyenne : ${d.value.toFixed(2)} ${unites[d.feature]}`); //généré par l'IA prcq rien ne s'affichait
+                .html(`Moyenne : ${d.value.toFixed(2)} ${unites[d.feature]}`); //généré par l'IA prcq rien ne s'affichait à part "undefined"
             })
             .on("mousemove", (event) => {
                 tooltipSpider
@@ -547,10 +497,10 @@ d3.csv("canton_meteo.csv").then(donnees =>{
     
     //lier les selects à la fonction dessiner sinon rien ne s"affiche.
     function afficher (){
-    const canton = selectC.value;
+    const cantonspid = selectC.value;
     const mois = selectM.value;
 
-    const moyenne = calamoyenne(donnees, canton, mois);
+    const moyenne = calamoyenne(donnees, cantonspid, mois);
     dessinerSpider(moyenne);
     }
 
@@ -559,3 +509,138 @@ d3.csv("canton_meteo.csv").then(donnees =>{
     selectM.addEventListener("change", afficher);
 
 });
+    
+//VISUALISATION NUMÉRO 3
+
+//HISTOGRAMME
+
+//interface générale 
+let titre_histogramme = document.createElement("h2")
+document.body.appendChild(titre_histogramme)
+titre_histogramme.innerHTML="HISTOGRAMME DES PRECIPITATIONS"
+titre_histogramme.style.fontFamily = "arial";
+
+const labelMoisbis = document.createElement("span");
+labelMoisbis.innerHTML = "Mois : ";
+document.body.appendChild(labelMoisbis);
+
+const selectMbis = document.createElement("select");
+selectMbis.id = "moisselectbis";
+selectMbis.style.marginBottom = "20px";
+document.body.appendChild(selectMbis);
+
+let espace_2 = document.createElement("br")
+document.body.appendChild(espace_2);
+
+const svg_2 = d3
+.select("body")
+.append("svg")
+.attr("width", largeur)
+.attr("height", hauteur)
+.style("border", "1px solid black");
+
+//projet 2
+
+const temp = svg_2.append("g");
+const cant = svg_2.append("g");
+d3.csv("canton_meteo.csv").then(dessinerHistogramme);
+
+svg_2.selectAll("*").remove();
+
+//récupérer liste des cantons de d_station
+function dessinerHistogramme (d_station){
+const cantonshis = [];
+d_station.forEach(d => {
+    if (!cantonshis.includes(d.canton)) {
+        cantonshis.push(d.canton);
+    }
+});
+
+//indiquer la moyenne mensuelle des précipitations, en reprenant la constante selectM présent dans la spider-chart
+const moisSelect = +selectMbis.value;
+
+let d_stationmoyenne = cantonshis.map(canton => {
+    let selection = d_station.filter(d =>
+        d.canton == canton &&
+        new Date(d.date).getMonth() + 1 == +moisSelect
+    );
+    return{
+        canton : canton,
+        prcp : d3.mean(selection, d => +d.prcp)
+    };
+}); 
+
+d_stationmoyenne.sort((a,b) => a.canton.localeCompare(b.canton))
+
+const espacement = 28;
+const marge_gauche = 60;
+
+temp
+.selectAll("rect")
+.data(d_stationmoyenne)
+.enter()
+.append("rect")
+.attr("x", d => axeX(d.canton))
+.attr("y",d => axeY(d.prcp))
+.attr("width", 18)
+.attr("height", d =>(d.prcp*10))
+.attr("fill","aquamarine")
+
+
+cant
+.selectAll("text")
+.data(d_stationmoyenne)
+.join("text")
+.text((d)=>d.canton)
+.attr("x",(d,i)=> i * espacement + marge_gauche + 9)
+.attr("y", 520)
+.attr("font-family", "arial")
+.attr("font-size", "12px")
+.attr("text-anchor", "middle")
+.attr("fill","black")
+
+//axe y dont la valeur maximale correspond à la valeur maximal de précipitation, la valeur maximale est 1040.4, donc on peut arrondir à 1041
+const axeY = d3.scaleLinear()
+    .domain([0, 1041])
+    .range([500, 50]);
+
+svg_2.append("g")
+    .attr("transform", `translate(${marge_gauche}, 0)`)
+    .call(d3.axisLeft(axeY).ticks(10));
+
+const axeX = d3.scaleBand()
+    .domain(d_stationmoyenne.map(d => d.canton))
+    .range([
+        marge_gauche,
+        largeur - marge_gauche
+    ])
+    .padding(0.2);
+svg_2.append("g")
+    .attr("transform", `translate(0, 500)`)
+    .call(d3.axisBottom(axeX));
+
+//cette ligne permet de supprimer la ligne d'affichage cant("text") qui mettait le nom des cantons sans axe x. Cela créait un double affichage
+cant.selectAll("*").remove(); // généré par l'IA, parce que je ne savais pas d'où provenait cette ligne
+
+    const selectMbis = document.getElementById("moisselectbis");
+
+        const moisnomsbis = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+
+    moisnomsbis.forEach((m, i) => {
+        const opt =document.createElement("option");
+        opt.value = i + 1;
+        opt.innerText = m;
+        selectMbis.appendChild(opt);
+    });
+    
+    //lier les selects à la fonction dessiner sinon rien ne s"affiche.
+    function afficher (){
+    const moisselectbis = +selectMbis.value;
+
+    dessinerHistogramme(moisselectbis);
+    }
+
+    //donner un event au select
+    selectMbis.addEventListener("change", afficher);
+
+};
