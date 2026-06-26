@@ -231,7 +231,7 @@ const colorScale=d3.scaleLinear()
 //SPIDER-CHART
 let titre_SpiderChart = document.createElement("h2")
 document.body.appendChild(titre_SpiderChart)
-titre_SpiderChart.innerHTML="Spider-Chart"
+titre_SpiderChart.innerHTML="SPIDERCHART"
 titre_SpiderChart.style.fontFamily = "arial"
 
 //mettre les selects pour sélectionner le canton et le mois ainsi que les labels des selects pour clarifier
@@ -262,7 +262,7 @@ const svg_3 = d3
     .append("svg")
     .attr("width", largeur)
     .attr("height", hauteur)
-    .style("border", "1px solid black");
+
 
 const cantonspid = svg_3.append("g");
 d3.csv("canton_meteo.csv").then(dessinerSpider);
@@ -382,13 +382,13 @@ function calamoyenne (données, cantonspid, mois){
     const tooltipSpider = d3
             .select("body")
             .append("div")
+            .style("opacity", 0)
             .style("position", "absolute")
-            .style("visibility", "hidden")
-            .style("background-color", "lightyellow")
+            .style("background-color", "white")
             .style("border", "solid")
             .style("border-width", "1px")
-            .style("border-radius", "5px")
-            .style("padding", "4px");
+            .style("border-radius", "10px")
+            .style("padding", "8px");
 
 //conversion des données en coordonnées
 function getCoordinates (données){
@@ -452,16 +452,25 @@ function dessinerSpider (data){
             .on("mouseover", (event, d) => {
                 tooltipSpider
                 .style("visibility", "visible")
-                .style("opacity", 1)
-                .html(`Moyenne : ${d.value.toFixed(2)} ${unites[d.feature]}`); //généré par l'IA prcq rien ne s'affichait à part "undefined"
+                .html(
+                    `<b>${noms[d.feature]}</b><br> 
+                    <b>Moyenne :</b> ${d.value.toFixed(2)} ${unites[d.feature]}`) //généré par l'IA prcq rien ne s'affichait à part "undefined"
+                .style("left", `${event.pageX+15}px `)
+                .style("top", `${event.pageY+15}px `)
+                .style("opacity", 0.7)
+                .style("stroke", "black")
+                .style("stroke-width","1")
+                .style("stroke-opacity","2")
+                .style("border-radius","10px")
+                .style("padding","8px")
             })
             .on("mousemove", (event) => {
                 tooltipSpider
-                .style("left", `${event.pageX+10}px `)
-                .style("top", `${event.pageY+10}px `); 
+                .style("left", `${event.pageX+15}px `)
+                .style("top", `${event.pageY+15}px `); 
             })
             .on("mouseout", () => {
-                 tooltipSpider.style ("visibility", "hidden")
+                 tooltipSpider.style ("opacity", 0)
             })
         );
 };
@@ -529,6 +538,14 @@ selectMbis.id = "moisselectbis";
 selectMbis.style.marginBottom = "20px";
 document.body.appendChild(selectMbis);
 
+const moisnomsbis = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+moisnomsbis.forEach((m, i) => {
+        const opt =document.createElement("option");
+        opt.value = i + 1;
+        opt.innerText = m;
+        selectMbis.appendChild(opt);
+    });
+
 let espace_2 = document.createElement("br")
 document.body.appendChild(espace_2);
 
@@ -537,18 +554,31 @@ const svg_2 = d3
 .append("svg")
 .attr("width", largeur)
 .attr("height", hauteur)
-.style("border", "1px solid black");
+
 
 //projet 2
 
-const temp = svg_2.append("g");
-const cant = svg_2.append("g");
-d3.csv("canton_meteo.csv").then(dessinerHistogramme);
 
-svg_2.selectAll("*").remove();
+let donneesHistogramme;
+
+d3.csv("canton_meteo.csv").then(data =>{
+    donneesHistogramme = data;
+    dessinerHistogramme(data)
+    selectMbis.addEventListener("change", ()=>{
+        svg_2.selectAll("*").remove()
+        dessinerHistogramme(donneesHistogramme)
+    })
+});
+
+
+
+
 
 //récupérer liste des cantons de d_station
 function dessinerHistogramme (d_station){
+svg_2.selectAll("*").remove();
+const temp = svg_2.append("g");
+const cant = svg_2.append("g");
 const cantonshis = [];
 d_station.forEach(d => {
     if (!cantonshis.includes(d.canton)) {
@@ -575,38 +605,14 @@ d_stationmoyenne.sort((a,b) => a.canton.localeCompare(b.canton))
 const espacement = 28;
 const marge_gauche = 60;
 
-temp
-.selectAll("rect")
-.data(d_stationmoyenne)
-.enter()
-.append("rect")
-.attr("x", d => axeX(d.canton))
-.attr("y",d => axeY(d.prcp))
-.attr("width", 18)
-.attr("height", d =>(d.prcp*10))
-.attr("fill","aquamarine")
 
 
-cant
-.selectAll("text")
-.data(d_stationmoyenne)
-.join("text")
-.text((d)=>d.canton)
-.attr("x",(d,i)=> i * espacement + marge_gauche + 9)
-.attr("y", 520)
-.attr("font-family", "arial")
-.attr("font-size", "12px")
-.attr("text-anchor", "middle")
-.attr("fill","black")
+
 
 //axe y dont la valeur maximale correspond à la valeur maximal de précipitation, la valeur maximale est 1040.4, donc on peut arrondir à 1041
 const axeY = d3.scaleLinear()
-    .domain([0, 1041])
+    .domain([0, d3.max(d_stationmoyenne, d=>d.prcp)])
     .range([500, 50]);
-
-svg_2.append("g")
-    .attr("transform", `translate(${marge_gauche}, 0)`)
-    .call(d3.axisLeft(axeY).ticks(10));
 
 const axeX = d3.scaleBand()
     .domain(d_stationmoyenne.map(d => d.canton))
@@ -615,32 +621,50 @@ const axeX = d3.scaleBand()
         largeur - marge_gauche
     ])
     .padding(0.2);
+
+    svg_2.append("g")
+    .attr("transform", `translate(${marge_gauche}, 0)`)
+    .call(d3.axisLeft(axeY).ticks(10));
 svg_2.append("g")
     .attr("transform", `translate(0, 500)`)
     .call(d3.axisBottom(axeX));
 
-//cette ligne permet de supprimer la ligne d'affichage cant("text") qui mettait le nom des cantons sans axe x. Cela créait un double affichage
-cant.selectAll("*").remove(); // généré par l'IA, parce que je ne savais pas d'où provenait cette ligne
+    const tooltipHisto = d3
+            .select("body")
+            .append("div")
+            .style("opacity", 0)
+            .style("position", "absolute")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "1px")
+            .style("border-radius", "10px")
+            .style("padding", "8px");
 
-    const selectMbis = document.getElementById("moisselectbis");
-
-        const moisnomsbis = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-
-    moisnomsbis.forEach((m, i) => {
-        const opt =document.createElement("option");
-        opt.value = i + 1;
-        opt.innerText = m;
-        selectMbis.appendChild(opt);
-    });
-    
-    //lier les selects à la fonction dessiner sinon rien ne s"affiche.
-    function afficher (){
-    const moisselectbis = +selectMbis.value;
-
-    dessinerHistogramme(moisselectbis);
-    }
-
-    //donner un event au select
-    selectMbis.addEventListener("change", afficher);
-
+svg_2
+.selectAll("rect")
+.data(d_stationmoyenne)
+.enter()
+.append("rect")
+.attr("x", d => axeX(d.canton))
+.attr("y",d => axeY(d.prcp))
+.attr("width", 18)
+.attr("height", d => axeY(0)-axeY(d.prcp))
+.attr("fill","aquamarine")
+.on("mouseover", (event, d) => {
+                tooltipHisto
+                .html(
+                    `<b>Cantons : ${d.canton}</b><br> 
+                    <b>Précipitations : </b>${d.prcp.toFixed(2)} mm` ) //généré par l'IA prcq rien ne s'affichait à part "undefined"
+                .style("left", `${event.pageX+15}px `)
+                .style("top", `${event.pageY+15}px `)
+                .style("opacity", 0.7)
+                .style("stroke", "black")
+                .style("stroke-width","1")
+                .style("stroke-opacity","2")
+                .style("border-radius","10px")
+                .style("padding","8px")
+            })
+.on("mouseout", ()=>{
+    tooltipHisto.style("opacity",0)
+})
 };

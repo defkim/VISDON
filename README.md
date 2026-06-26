@@ -47,7 +47,7 @@ Pour expliciter la visualisation des données, une étiquette *tooltip* visible 
 
 Pour aller plus en profondeur, il aurait été envisageable d'indiquer les mesures minimales et maximales mensuelles de chaque mesure, ou encore d'ajouter le dessin d'un polygone annuel représentant le canton sélectionné. 
 
-L'histogramme représente les précipitations dans chaque canton en fonction du mois choisi. La hauteur des barres représentent l'importance de celles-ci. L'axe Y représente les valeurs des précipitations en mm allant de 0 à 1041 (soit la valeur maximale des précipitations arrondie). L'axe X représente les différents cantons de suisse cf.[image_histo]. 
+L'histogramme représente les précipitations dans chaque canton en fonction du mois choisi. La hauteur des barres représentent l'importance de celles-ci. L'axe Y représente les valeurs des précipitations en mm et s'adapte en fonction de la précipitation maximale sur le mois. L'axe X représente les différents cantons de suisse. Les valeurs des précipitations peuvent être vu plus en détails via l'étiquette *tooltip* cf.[image_histo]. 
 
 
 ![image_axes](spider_image_axe.png)
