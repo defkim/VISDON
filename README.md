@@ -1,4 +1,4 @@
-# Les Données Météos Suisse 2025
+# Données météorologiques 2025
 
 ## Description du processus d'obtention des données
 Dans un premier temps les données furent récupérés par l'intermédiaire de ce site [météo]. Chaque canton est représenté par une station météorologique et se télécharge en un fichier csv. Il y a un fichier par canton. Pourtant, il a été constaté que si les données initiales établissaient une station par chef-lieux, au moment où il a été question d'y ajouter les latitudes et longitudes, le site [météo suisse](https://www.meteosuisse.admin.ch/services-et-publications/applications/valeurs-mesurees.html#param=messwerte-lufttemperatur-10min&station=DAV&table=false) ne trouvait pas les-dites stations. Il a donc fallu prendre de nouvelles stations des cantons en question.
