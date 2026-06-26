@@ -35,7 +35,7 @@ Le pré-traitement des données se résume par l'ajout de colonnes mentionné pr
 Dans un deuxième temps, nous avons du établir dans notre code un tableau de conversion des données car les noms des cantons dans notre tableau csv ne correspondait pas avec les données permettant de dessiner la carte de la Suisse (notamment des noms en suisse-allemand).
 
 ## Expliquer les visualisations produites
-La heat map permet de visualiser les écarts de températures entre chaque canton sur le territoire de la suisse en fonction du jour sélectionné pour l'année 2025. Le gradient de couleur utiliser est le rouge pour les températures chaudes et le bleu pour les températures froides cf.[image_couleur_hm]. Un tooltip à également été créé afin d'avoir des informations supplémentaire comme le nom du canton, la température maximale et minimale ce jour-ci et également la température moyenne qui a été utilisée pour déterminer la couleur du canton cf.[image_tooltip_hm]. 
+La heat map permet de visualiser les écarts de températures entre chaque canton sur le territoire de la suisse en fonction du jour sélectionné pour l'année 2025. Le gradient de couleur utiliser est le rouge pour les températures chaudes et le bleu pour les températures froides cf.[image_couleur_hm]. Une étiquette *tooltip*, visible par un mouseover, a également été créé afin d'avoir des informations supplémentaire comme le nom du canton, la température maximale et minimale ce jour-ci et également la température moyenne qui a été utilisée pour déterminer la couleur du canton cf.[image_tooltip_hm]. 
 
 Une spider-chart fut créée, dans le but de visualiser les moyennes de *wspd*, *wpgt*, *pres* et *tsun*, du canton sélectionné au préalable, ainsi que le mois choisi. Lorsque l'utilisateur percoit la chart, il se retrouve avec deux axes, qui indiquent quatre mesures différentes. Les noms inscrits à côté de leurs extrémités correspondantes diffèrent du nom de colonnes originales, pour une meilleure compréhension des données. L'image [image_axes] présente les valeurs de *wspd* sous *Vent*; *wpgt* sous *Rafale de Vent*; *pres* sous *Pression*; *tsun* sous *Ensoleillement*.
 
@@ -47,7 +47,7 @@ Pour expliciter la visualisation des données, une étiquette *tooltip* visible 
 
 Pour aller plus en profondeur, il aurait été envisageable d'indiquer les mesures minimales et maximales mensuelles de chaque mesure, ou encore d'ajouter le dessin d'un polygone annuel représentant le canton sélectionné. 
 
-L'histogramme représente les précipitations dans chaque canton en fonction du mois choisi. La hauteur des barres représentent l'importance de celles-ci. 
+L'histogramme représente les précipitations dans chaque canton en fonction du mois choisi. La hauteur des barres représentent l'importance de celles-ci. L'axe Y représente les valeurs des précipitations en mm allant de 0 à 1041 (soit la valeur maximale des précipitations arrondie). L'axe X représente les différents cantons de suisse cf.[image_histo]. 
 
 
 ![image_axes](spider_image_axe.png)
@@ -56,6 +56,7 @@ L'histogramme représente les précipitations dans chaque canton en fonction du 
 ![image_étiquette](spider_tooltip.png)
 ![image_couleur_hm](image_couleur_hm.png)
 ![image_tooltip_hm](image_tooltip_hm.png)
+![image_histo](image_histo.png)
 
 
 ## Utilisation des IA génératives
