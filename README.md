@@ -6,22 +6,22 @@ Dans un premier temps les données furent récupérés par l'intermédiaire de c
 ## Présentation des données
 Les données finales se présentent sous forme de tableau dans un fichier csv : "canton_meteo.csv". Ce fichier de 9490 lignes est le produit de l'assemblage des 26 fichiers cantonaux. Il contient 16 colonnes :
 
-* canton -- nom du canton
-* ville -- nom de la ville
-* abb_station -- diminutif de la station
+* canton = nom du canton
+* ville = nom de la ville
+* abb_station = diminutif de la station
 * latitude
 * longitude
-* date -- année-mois-jour heure
-* tavg -- température moyenne
-* tmin -- température minimale
-* tmax -- température maximale
-* prcp -- taux de précipitation en mm
-* snow -- taux de neige
-* wdir -- direction du vent
-* wspd -- vitesse du vent en moyenne en km/h
-* wpgt -- pic de rafale de vent en km/h
-* pres -- pression atmosphérique en hPa
-* tsun -- temps d'ensoleillement en min
+* date = année-mois-jour heure
+* tavg = température moyenne
+* tmin = température minimale
+* tmax = température maximale
+* prcp = taux de précipitation en mm
+* snow = taux de neige
+* wdir = direction du vent
+* wspd = vitesse du vent en moyenne en km/h
+* wpgt = pic de rafale de vent en km/h
+* pres = pression atmosphérique en hPa
+* tsun = temps d'ensoleillement en min
 
 Dans les 16, 5 colonnes furent rajoutées après le téléchargement des fichiers : *canton*, *ville*, *abb_station* (qui fait référence à l'abbrévation de la station), *latitude* et *longitude*. Ces ajouts ont un objectif de précision pour pouvoir distinguer les stations entre elles, et avoir une meilleure visualisation. Les cantons sont mentionnés par leur diminutif. La nécessité de mettre l'abbréviation de la station est un moyen de permettre d'être plus informé sur la provenance de ces valeurs, comme il est possible que certaines villes/régions possèdent plusieurs stations météorologiques, ayant différents objectifs. 
 
