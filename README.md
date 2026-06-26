@@ -71,3 +71,5 @@ Pour ce qui est de la structure de la spider-chart, ou encore du *tooltip*, des 
 
 Concernant la heat map, les informations de mise en page de l'interface comme l'affichage du calendrier, format des dates, etc. proviennent directement du site de la librairie D3. 
 [site D3](https://d3js.org/)
+
+Et finalement, l'histogramme des précipitations reprend un peu de certaines formules utilisées dans les codes précédents et fait brièvement usage de l'IA générative, pour améliorer l'affichage du tooltip notamment. Une partie de la structure vient aussi du cours *Visualisation de données* du 24 mars 2026, où ce type de visualisation avait été travaillé.
