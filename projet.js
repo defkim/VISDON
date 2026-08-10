@@ -23,9 +23,7 @@ titre_heatMap.style.fontFamily = "arial"
 
 let input = document.createElement("input")
 document.body.appendChild(input)
-let bouton = document.createElement("button")
-document.body.appendChild(bouton)
-bouton.innerHTML="Choisir une date"
+
 let espace_1 = document.createElement("br")
 document.body.appendChild(espace_1)
 input.type = "date"
@@ -38,32 +36,75 @@ input.value="2025-01-01"
 
 
 
-const svg = d3
-.select("body")
-.append("svg")
-.attr("width", largeur)
-.attr("height", hauteur)
+//centraliser les données en un seul appel pour pouvoir tout recharger en une seule fois (un seul clic)
 
 let données_suisse, données_cantons, données_stations
+    //état initial des différentes vues
+let canton_selec = null
+let mesure_histo = "prcp"
+let type_histo = "comparaison_entre_canton"
 
-//importation des données
-d3.json("swiss_general_map.json").then((suisse)=>{
-    d3.json("swiss_kanton_map.json").then((canton_ch)=>{d3.csv("canton_meteo.csv").then((d_station)=>{
-    dessinerCarte(suisse,canton_ch,d_station);
-    dessinerSpider(d_station);
-    dessinerHistogramme(d_station);
-//Choix de la date 
-bouton.addEventListener("click", () =>{
-    const recup_date_choisie = input.value;
-    const date_du_jour = d_station.filter (d => d.date.startsWith(recup_date_choisie))
+Promise.all([
+    d3.json("swiss_general_map.json"),
+    d3.json("swiss_kanton_map.json"),
+    d3.csv("canton_meteo.csv")
+]).then(([suisse, canton_ch, d_station]) => {
+    données_suisse = suisse;
+    données_cantons = canton_ch
+    données_stations = d_station
+
+    données_stations.forEach (d => {
+        d.latitude=+d.latitude;
+        d.longitude=+d.longitude;
+        d.tmin =+d.tmin;
+        d.tmax =+d.tmax;
+        d.tavg =+d.tavg;
+        d.prcp = d.prcp?+d.prcp:0; // conversion précipitations
+        d.tsun =+d.tsun
+        d.wspd = +d.wspd
+        d.wpgt = +d.wpgt
+        d.pres = +d.pres
+
+    })
+    remplirSelectCantons()
+    MAJ_carte(input.value)
+    MAJ_histo()
+    dessinerSpider(calamoyenne(données_stations, données_stations[0].canton, +input.value.split("-")[1]))
+
+    input.addEventListener("change", () =>{
+    MAJ_carte(input.value)
+    })
+})
+
+function remplirSelectCantons(){
+    const cantons = [...new Set(données_stations.map(d =>d.canton))].sort()
+    cantons.forEach(c=>{
+        const opt = document.createElement("option")
+        opt.value = c; opt.innerText = c
+        selectC.appendChild(opt)
+    })
+    selectC.addEventListener("change",()=>selectionnerCanton(selectC.value))
+}
+
+function MAJ_carte (date_select){
+    const date_du_jour = données_stations.filter(d =>d.date.startsWith(date_select))
     svg.selectAll("*").remove()
-    svg_2.selectAll("*").remove()
-    dessinerCarte (suisse, canton_ch, date_du_jour)
-    
-})
-});
-});
-})
+    dessinerCarte(données_suisse, données_cantons, date_du_jour)
+}
+
+function selectionnerCanton (canton){
+    canton_selec = canton
+    selectC.value = canton 
+    const mois = +input.value.split("-")[1]
+    const moyenne = calamoyenne (données_stations, canton, mois)
+    dessinerSpider(moyenne)
+
+    if (type_histo === "comparaison_entre_canton"){
+        MAJ_histo()
+    }
+}
+
+function MAJ_histo (){}
 
 
 //Création d'un tableau pour convertir données des différents fichier 
@@ -98,15 +139,13 @@ const conversion = {
     "GR":"Graubünden",
 }
 
-// tooltip avec info température max.,min. et moyenne
-
-var tooltipCarte = d3
+const svg = d3
 .select("body")
-.append("div")
-.style("opacity", 0)
-.style("background-color", "white")
-.style("border", "solid")
-.style ("position", "absolute")
+.append("svg")
+.attr("width", largeur)
+.attr("height", hauteur)
+
+// tooltip avec info température max.,min. et moyenne
 
 function dessinerCarte(suisse,cantons,d_station){
 
@@ -128,7 +167,11 @@ function dessinerCarte(suisse,cantons,d_station){
         d.tmin =+d.tmin;
         d.tmax =+d.tmax;
         d.tavg =+d.tavg;
-        d.prcp = d.prcp?+d.prcp:0;// conversion des précipitations
+        d.prcp = d.prcp?+d.prcp:0; // conversion précipitations
+        d.tsun =+d.tsun
+        d.wspd = +d.wspd
+        d.wpgt = +d.wpgt
+        d.pres = +d.pres
 
     
         
@@ -155,6 +198,10 @@ d_station.forEach(d=>{
 const colorScale=d3.scaleLinear()
     .domain([d3.min(d_station , d =>d.tmin), d3.max(d_station, d => d.tmax)])
     .range(["#00cfff", "#ff0000"])
+
+// création d'une légende pour les couleurs 
+
+
 
     //carte suisse
 
@@ -199,8 +246,12 @@ const colorScale=d3.scaleLinear()
     .join("circle")
     .attr("cx", d=>projection([d.longitude, d.latitude])[0])
     .attr("cy", d=>projection([d.longitude,d.latitude])[1])
-    .attr("r",7)
-    .attr("fill", "blue")
+    .attr("r",5)
+    .attr("fill", "black")
+    .attr("fill-opacity", 0.25)
+    .attr("stroke", "#a4a3a3")
+    .attr("stroke-width",1)
+    .attr("stroke-opacity", 0.30)
     .on("mouseover", function (e,d){
         tooltipCarte.html(
             "<b>Canton</b>:" + d.canton +
@@ -225,6 +276,8 @@ const colorScale=d3.scaleLinear()
     })
 
 };
+
+
 
 //VISUALISATION NUMÉRO 2
 
