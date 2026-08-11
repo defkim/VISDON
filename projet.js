@@ -318,28 +318,13 @@ const svg_3 = d3
 
 
 const cantonspid = svg_3.append("g");
-d3.csv("canton_meteo.csv").then(dessinerSpider);
 
 //échelle pour la grille
 let radialScale = d3.scaleLinear()
     .domain([0,10])
     .range([0,250]);
 
-//échelle pour chaque variable prcq données trop disparatres les unes des autres, au lieu de mettre les valeurs maximales, que j'ai laissé en commentaire, j'ai essayé de mettre des domaines allant jusqu'à un certains points, en espérant que cela corresponde plus ou moins à une moyenne maximale faisable, afin d'agrandir les polygones qui restaient assez minimes autrement.
-let scales = {
-    tsun : d3.scaleLinear()
-        .domain([0,852])
-        .range([0,250]),
-    wspd : d3.scaleLinear()
-        .domain([0,64])
-        .range([0,250]),
-    wpgt : d3.scaleLinear()
-        .domain([0,149])
-        .range([0,250]),
-    pres : d3.scaleLinear()
-        .domain([0,1041])
-        .range([0,250])
-};
+let scales;
 
 //comme on place les points en pourcent, il faut marquer en mode 2.5, c'est pour les rayons du cercle et que cela corresponde à la norme du domain qui va jusuq'à 10. Si on met en mode 0.25, cercle bien plus petit.
 let ticks = [2.5, 5, 7.5, 10];
@@ -541,7 +526,7 @@ d3.csv("canton_meteo.csv").then(donnees =>{
     });
     cantons.sort();
 
-    cantons.forEach(c =>{
+    cantons.forEach(c => {
         const opt = document.createElement("option");
         opt.value = c;
         opt.innerText = c;
@@ -556,6 +541,42 @@ d3.csv("canton_meteo.csv").then(donnees =>{
         opt.innerText = m;
         selectM.appendChild(opt);
     });
+
+    //regrouper les données par cantons pour simplifier la lecture du code utilisé pour délimiter la variable scales pour les différentes mesures
+    const ParCanton = d3.groups (donnees, d => d.canton);
+
+    //délimiter ici scales pour chaque colonne de mesures, comme variable déjà émise au début, la fonction getCoordinates peut toujours s'y référer, mais cela permet de ne pas imposer les valeurs avant même que le reste de la chart ne soit créée
+    scales = {
+
+        tsun : d3.scaleLinear()
+            .domain([
+                d3.mean(ParCanton, ([canton, valeurs]) => d3.min(valeurs, d => +d.tsun)),
+                d3.mean(ParCanton, ([canton, valeurs]) => d3.max(valeurs, d => +d.tsun))
+            ])
+            .range([0, 250]),
+        
+        wspd : d3.scaleLinear()
+            .domain([
+                d3.mean(ParCanton, ([canton, valeurs]) => d3.min(valeurs, d => +d.wspd)),
+                d3.mean(ParCanton, ([canton, valeurs]) => d3.max(valeurs, d => +d.wspd))
+            ])
+            .range ([0, 250]),
+        
+        wpgt : d3.scaleLinear()
+            .domain([
+                d3.mean(ParCanton, ([canton, valeurs]) => d3.min(valeurs, d=> +d.wpgt)),
+                d3.mean(ParCanton, ([canton, valeurs]) => d3.max(valeurs, d => +d.wpgt))
+            ])
+            .range([0, 250]),
+        
+        pres : d3.scaleLinear()
+            .domain([
+                d3.min(donnees, d => +d.pres),
+                d3.max(donnees, d => +d.pres)
+            ])
+            .range([0, 250])
+        //en voulant appliquer la méthode des moyennes minimales et maximales sur la pression, le polygone sortait du graphe, par mesure de précaution, j'ai laissé les valeurs minimales et maximales simples.
+    };
     
     //lier les selects à la fonction dessiner sinon rien ne s"affiche.
     function afficher (){
@@ -572,6 +593,8 @@ d3.csv("canton_meteo.csv").then(donnees =>{
 
 });
     
+
+
 //VISUALISATION NUMÉRO 3
 
 //HISTOGRAMME
