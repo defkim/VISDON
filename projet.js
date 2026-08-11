@@ -1,4 +1,4 @@
-const largeur = 800;
+const largeur = 700;
 const hauteur = 700;
 const marges = 25;
 
@@ -11,21 +11,39 @@ titre.style.fontFamily = "arial"
 let espace = document.createElement("br")
 document.body.appendChild(espace)
 
+// création bloc pour deux visu côte à côte plus joli ptetre
+let CoteCote = document.createElement("div")
+document.body.appendChild(CoteCote)
+CoteCote.style.display = "flex";
+CoteCote.style.flexDirection = "row";
+CoteCote.style.justifyContent = "center";
+CoteCote.style.alignItems = "flex-start";
+CoteCote.style.gap = "20px";
+CoteCote.style.flexWrap = "nowrap";
+CoteCote.style.width = "100%";
+
+//deux visu dedans
+let blocHeatMap = document.createElement("div")
+CoteCote.appendChild(blocHeatMap)
+
+let blocSpiderChart = document.createElement("div")
+CoteCote.appendChild(blocSpiderChart)
+
 //HEAT MAP
 
 
 //interface, bouton + choix des dates 
 
 let titre_heatMap = document.createElement("h2")
-document.body.appendChild(titre_heatMap)
+blocHeatMap.appendChild(titre_heatMap)
 titre_heatMap.innerHTML="HEAT MAP"
 titre_heatMap.style.fontFamily = "arial"
 
 let input = document.createElement("input")
-document.body.appendChild(input)
+blocHeatMap.appendChild(input)
 
 let espace_1 = document.createElement("br")
-document.body.appendChild(espace_1)
+blocHeatMap.appendChild(espace_1)
 input.type = "date"
 input.min = "2025-01-01"
 input.max = "2025-12-31"
@@ -140,7 +158,7 @@ const conversion = {
 }
 
 const svg = d3
-.select("body")
+.select(blocHeatMap)
 .append("svg")
 .attr("width", largeur)
 .attr("height", hauteur)
@@ -283,7 +301,7 @@ const colorScale=d3.scaleLinear()
 
 //SPIDER-CHART
 let titre_SpiderChart = document.createElement("h2")
-document.body.appendChild(titre_SpiderChart)
+blocSpiderChart.appendChild(titre_SpiderChart)
 titre_SpiderChart.innerHTML="SPIDERCHART"
 titre_SpiderChart.style.fontFamily = "arial"
 
@@ -291,27 +309,27 @@ titre_SpiderChart.style.fontFamily = "arial"
 
 const labelCanton = document.createElement("span");
 labelCanton.innerHTML = "Canton : ";
-document.body.appendChild(labelCanton);
+blocSpiderChart.appendChild(labelCanton);
 
 const selectC = document.createElement("select");
 selectC.id = "cantonselect";
 selectC.style.marginRight = "10px";
-document.body.appendChild(selectC);
+blocSpiderChart.appendChild(selectC);
 
 const labelMois = document.createElement("span");
 labelMois.innerHTML = "Mois : ";
-document.body.appendChild(labelMois);
+blocSpiderChart.appendChild(labelMois);
 
 const selectM = document.createElement("select");
 selectM.id = "moisselect";
 selectM.style.marginBottom = "20px";
-document.body.appendChild(selectM);
+blocSpiderChart.appendChild(selectM);
 
 let espace_3 = document.createElement("br")
-document.body.appendChild(espace_3);
+blocSpiderChart.appendChild(espace_3);
 
 const svg_3 = d3
-    .select("body")
+    .select(blocSpiderChart)
     .append("svg")
     .attr("width", largeur)
     .attr("height", hauteur)
