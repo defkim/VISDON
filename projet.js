@@ -11,6 +11,11 @@ titre.style.fontFamily = "arial"
 let espace = document.createElement("br")
 document.body.appendChild(espace)
 
+//petite description du projet, à améliorer
+let descri_visu = document.createElement("p")
+document.body.appendChild(descri_visu)
+descri_visu.innerHTML= "Découvrez les différentes données météorologiques à travers ces différentes visualisations ! Chaque graphe représente différentes informations permettant d'en savoir plus sur la météo suisse. Grâce aux différentes stations sélectionnées, vous pourrez vous tenir informés de ce que chaque canton a pu ressentir en terme de températures, de vent, tout comme le temps d'ensoleillement, ainsi que la pluie qui y a été relevée !"
+
 // création bloc pour deux visu côte à côte plus joli ptetre
 let CoteCote = document.createElement("div")
 document.body.appendChild(CoteCote)
