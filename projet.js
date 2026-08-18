@@ -66,6 +66,7 @@ let données_suisse, données_cantons, données_stations
 let canton_selec = null
 let mesure_histo = "prcp"
 let type_histo = "comparaison_entre_canton"
+let donneesHistogramme;
 
 Promise.all([
     d3.json("swiss_general_map.json"),
@@ -96,7 +97,18 @@ Promise.all([
     dessinerSpider(calamoyenne(données_stations, données_stations[0].canton, +input.value.split("-")[1]))
 
     input.addEventListener("change", () =>{
+
     MAJ_carte(input.value)
+
+    if (canton_selec){ // màj avec mois
+        selectionnerCanton(canton_selec)
+    } else { // màj valeur par defaut
+        MAJ_histo()
+        const mois = +input.value.split("-")[1]
+        const selectM = document.getElementById("moisselect")
+        if (selectM) selectM.value = mois
+         dessinerSpider(calamoyenne(données_stations, données_stations[0], mois))
+    }
     })
 })
 
@@ -118,8 +130,11 @@ function MAJ_carte (date_select){
 
 function selectionnerCanton (canton){
     canton_selec = canton
-    selectC.value = canton 
     const mois = +input.value.split("-")[1]
+    const selectC = document.getElementById("cantonselect")
+    const selectM = document.getElementById("moisselect")
+    if(selectC) selectC.value=canton
+    if(selectM) selectM.value=mois
     const moyenne = calamoyenne (données_stations, canton, mois)
     dessinerSpider(moyenne)
 
@@ -128,7 +143,14 @@ function selectionnerCanton (canton){
     }
 }
 
-function MAJ_histo (){}
+function MAJ_histo (){
+    
+    const mois = +input.value.split("-")[1]
+    const selectMbis = document.getElementById("moisselectbis");
+    if (selectMbis) selectMbis.value=mois
+
+    dessinerHistogramme(donneesHistogramme)
+}
 
 
 //Création d'un tableau pour convertir données des différents fichier 
@@ -170,6 +192,17 @@ const svg = d3
 .attr("height", hauteur)
 
 // tooltip avec info température max.,min. et moyenne
+
+const tooltipCarte = d3
+            .select("body")
+            .append("div")
+            .style("opacity", 0)
+            .style("position", "absolute")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "1px")
+            .style("border-radius", "10px")
+            .style("padding", "8px");
 
 function dessinerCarte(suisse,cantons,d_station){
 
@@ -661,7 +694,7 @@ const svg_2 = d3
 //projet 2
 
 
-let donneesHistogramme;
+donneesHistogramme;
 
 d3.csv("canton_meteo.csv").then(data =>{
     donneesHistogramme = data;
