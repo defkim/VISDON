@@ -107,7 +107,7 @@ Promise.all([
         const mois = +input.value.split("-")[1]
         const selectM = document.getElementById("moisselect")
         if (selectM) selectM.value = mois
-         dessinerSpider(calamoyenne(données_stations, données_stations[0], mois))
+         dessinerSpider(calamoyenne(données_stations, données_stations[0].canton, mois))
     }
     })
 })
