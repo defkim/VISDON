@@ -67,15 +67,24 @@ let canton_selec = null
 let mesure_histo = "prcp"
 let type_histo = "comparaison_entre_canton"
 let donneesHistogramme;
+let normales;
 
 Promise.all([
     d3.json("swiss_general_map.json"),
     d3.json("swiss_kanton_map.json"),
-    d3.csv("canton_meteo.csv")
-]).then(([suisse, canton_ch, d_station]) => {
+    d3.csv("canton_meteo.csv"),
+    d3.csv("moyennes_prcp_1991-2020.csv")
+]).then(([suisse, canton_ch, d_station, d_normales]) => {
     données_suisse = suisse;
     données_cantons = canton_ch
-    données_stations = d_station
+    données_stations = d_station;
+
+    normales = {};
+    d_normales.forEach (d => {
+        const mois = +d.date.split("-")[1];
+        if (!normales[d.canton]) normales[d.canton] = {};
+        normales[d.canton][mois] = +d.prcp;
+    });
 
     données_stations.forEach (d => {
         d.latitude=+d.latitude;
@@ -110,7 +119,7 @@ Promise.all([
          dessinerSpider(calamoyenne(données_stations, données_stations[0].canton, mois))
     }
     })
-})
+});
 
 function remplirSelectCantons(){
     const cantons = [...new Set(données_stations.map(d =>d.canton))].sort()
@@ -731,7 +740,7 @@ let d_stationmoyenne = cantonshis.map(canton => {
     );
     return{
         canton : canton,
-        prcp : d3.mean(selection, d => +d.prcp)
+        prcp : d3.sum(selection, d => +d.prcp) //aditionner les valeurs de pluie pour comparer avec les données entre 1991 et 2020, normalement c'est comme ça que se marquent les précipitations
     };
 }); 
 
@@ -784,7 +793,16 @@ svg_2
 .attr("y",d => axeY(d.prcp))
 .attr("width", 18)
 .attr("height", d => axeY(0)-axeY(d.prcp))
-.attr("fill","aquamarine")
+.attr("fill", d => {
+    const normale = normales[d.canton][moisSelect];
+    let couleur;
+    if (d.prcp < normale){
+        couleur = "red";
+    } else {
+        couleur = "steelblue";
+    }
+    return couleur;
+})
 .on("mouseover", (event, d) => {
                 tooltipHisto
                 .html(
