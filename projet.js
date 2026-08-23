@@ -804,10 +804,15 @@ svg_2
     return couleur;
 })
 .on("mouseover", (event, d) => {
+
+    const normale = normales[d.canton][moisSelect]; //pour pouvoir s'y référer dans le tooltip
                 tooltipHisto
                 .html(
                     `<b>Cantons : ${d.canton}</b><br> 
-                    <b>Précipitations : </b>${d.prcp.toFixed(2)} mm` ) //généré par l'IA prcq rien ne s'affichait à part "undefined"
+                    <b>Précipitations : </b>${d.prcp.toFixed(2)} mm 
+                    <br>
+                    <b>Normale 1991-2020 :</b> ${normale} mm` ) //généré par l'IA prcq rien ne s'affichait à part "undefined"
+                    
                 .style("left", `${event.pageX+15}px `)
                 .style("top", `${event.pageY+15}px `)
                 .style("opacity", 0.7)
