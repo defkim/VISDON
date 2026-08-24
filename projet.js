@@ -103,8 +103,10 @@ Promise.all([
     remplirSelectCantons()
     MAJ_carte(input.value)
     MAJ_histo()
-    dessinerSpider(calamoyenne(données_stations, données_stations[0].canton, +input.value.split("-")[1]))
-
+    dessinerSpider(
+        calamoyenne(données_stations, données_stations[0].canton, +input.value.split("-")[1]),
+        calaannee(données_stations, données_stations[0].canton)
+    )
     input.addEventListener("change", () =>{
 
     MAJ_carte(input.value)
@@ -116,7 +118,7 @@ Promise.all([
         const mois = +input.value.split("-")[1]
         const selectM = document.getElementById("moisselect")
         if (selectM) selectM.value = mois
-         dessinerSpider(calamoyenne(données_stations, données_stations[0].canton, mois))
+        dessinerSpider(calamoyenne(données_stations, données_stations[0].canton, mois), calaannee (données_stations, données_stations[0].canton));
     }
     })
 });
@@ -145,7 +147,8 @@ function selectionnerCanton (canton){
     if(selectC) selectC.value=canton
     if(selectM) selectM.value=mois
     const moyenne = calamoyenne (données_stations, canton, mois)
-    dessinerSpider(moyenne)
+    const annuelle = calaannee(données_stations, canton);
+    dessinerSpider(moyenne, annuelle)
 
     if (type_histo === "comparaison_entre_canton"){
         MAJ_histo()
@@ -545,6 +548,39 @@ svg_3.selectAll(".axislabel")
             .text (d => noms[d.noms]) //obligé de mettre noms[d.noms] prcq sinon met les noms initiaux tsun, etc.
     );
 
+//légende des polygones
+const legendespid = svg_3.append("g")
+    .attr("transform", `translate(20, 20)`);
+
+legendespid.append("rect")
+    .attr("width", 15)
+    .attr("height", 15)
+    .attr("fill", "steelblue")
+    .attr("opacity", 0.5)
+    .attr("stroke", "blue")
+    .attr("stroke-width", 2);
+legendespid.append("text")
+    .attr("x", 20)
+    .attr("y", 12)
+    .text("Moyenne mensuelle du canton")
+    .style("font-size", "12px")
+    .style("font-family", "arial");
+
+legendespid.append("rect")
+    .attr("y", 20)
+   .attr("width", 15)
+    .attr("height", 15)
+    .attr("fill", "lightcoral")
+    .attr("opacity", 0.5)
+    .attr("stroke", "red")
+    .attr("stroke-width", 2);
+legendespid.append("text")
+    .attr("x", 20)
+    .attr("y", 32)
+    .text("Moyenne anuelle du canton")
+    .style("font-size", "12px")
+    .style("font-family", "arial");
+
 // on doit faire une fonction qui va permettre de faire une moyenne des données, pour avoir un polygone qui représente le mois sélectionné du canton choisi. Sinon, on pourrait faire jour par jour mais en sachant que certains résultats sont null ou équivalent à 0, c'est moins intéressant.
 function calamoyenne (données, cantonspid, mois){
     let selection = données.filter (d =>
@@ -558,6 +594,19 @@ function calamoyenne (données, cantonspid, mois){
         pres : d3.mean(selection, d => +d.pres)
     };
     //on convertit les données qui sont en format texte en nombre, avec la formule +d
+}
+
+//créer moyenne annuelle pour un canton sélectionné
+function calaannee(données, cantonspid){
+    let selection = données.filter ( d =>
+        d.canton == cantonspid
+    );
+    return {
+        tsun : d3.mean(selection, d => +d.tsun), 
+        wspd : d3.mean(selection, d => +d.wspd),
+        wpgt : d3.mean(selection, d => +d.wpgt),
+        pres : d3.mean(selection, d => +d.pres)
+    };
 }
   //créer tooltip qui permet d'afficher les données min ,max et la moyenne pour permettre une meilleure visualisation à l'utilisateur
     const tooltipSpider = d3
@@ -586,33 +635,34 @@ function getCoordinates (données){
 
 };
 
-function dessinerSpider (data){
+
+function dessinerSpider (data, dataannuelle){
     const coords = getCoordinates(data);
+    const coordsAnn = getCoordinates(dataannuelle);
 
     // rassembler les points pour former des polygones et y définir les couleurs
     let line = d3.line()
         .x(d => d.x)
         .y(d => d.y);
-    let colors = ["steelblue"]; //il n'y a qu'une seule couleur parce que pour l'instant il s'agit de faire un polygone faisant une moyenne du mois, mais il aurait été possible d'en faire un autre servant de rappel annuel.
+    let colors = ["steelblue", "lightcoral"]; //il y a une couleur pour le polygone mensuel et une pour le polygone annuel
 
     // supprime l'ancien polygone
     svg_3.selectAll("path").remove();
     svg_3.selectAll(".point").remove();
+    svg_3.selectAll(".pointAnn").remove();
 
     //recrée le polygone quand de nouvelles sélections sont faites
     svg_3.selectAll("path")
-        .data([data])
-        .join(
-            enter => enter.append("path")
-                .datum(d => getCoordinates(d))
-                .attr("d", line)
-                .attr("stroke-width", 3)
-                .attr("stroke", (_, i) => colors[i])
-                .attr("fill", (_, i) => colors[i])
-                .attr("stroke-opacity", 1)
-                .attr("opacity", 0.5)
-        );
+        .data([coords, coordsAnn])
+        .join("path")
+             .attr("d", line)
+             .attr("stroke-width", 3)
+             .attr("stroke", (_, i) => colors[i])
+             .attr("fill", (_, i) => colors[i])
+             .attr("stroke-opacity", 1)
+             .attr("opacity", 0.5);
   
+    // points pour polygone mensuel
     const Coordsdata = attributes.map((attr, i) =>({
         feature : attr,
         value : data[attr],
@@ -636,6 +686,48 @@ function dessinerSpider (data){
                 .html(
                     `<b>${noms[d.feature]}</b><br> 
                     <b>Moyenne :</b> ${d.value.toFixed(2)} ${unites[d.feature]}`) //généré par l'IA prcq rien ne s'affichait à part "undefined"
+                .style("left", `${event.pageX+15}px `)
+                .style("top", `${event.pageY+15}px `)
+                .style("opacity", 0.7)
+                .style("stroke", "black")
+                .style("stroke-width","1")
+                .style("stroke-opacity","2")
+                .style("border-radius","10px")
+                .style("padding","8px")
+            })
+            .on("mousemove", (event) => {
+                tooltipSpider
+                .style("left", `${event.pageX+15}px `)
+                .style("top", `${event.pageY+15}px `); 
+            })
+            .on("mouseout", () => {
+                 tooltipSpider.style ("opacity", 0)
+            })
+        );
+    // points pour polygone annuel
+    const CoordsdataAnn = attributes.map((attr, i) =>({
+        feature : attr,
+        value : dataannuelle[attr],
+        coords : coordsAnn[i]
+    })); // généré par l'IA pour la formation des points mensuels
+    //créer extrémités du polygone en points
+    svg_3.selectAll(".pointAnn")
+        .data(CoordsdataAnn)
+        .join(
+            enter => enter.append("circle")
+            .attr("class", "pointAnn")
+            .attr("cx", d => d.coords.x)
+            .attr("cy", d => d.coords.y)
+            .attr("r", 6)
+            .attr("fill", "lightcoral")
+            .attr("stroke", "red")
+            .attr("stroke-width", 2)
+            .on("mouseover", (event, d) => {
+                tooltipSpider
+                .style("visibility", "visible")
+                .html(
+                    `<b>${noms[d.feature]}</b><br> 
+                    <b>Moyenne annuelle :</b> ${d.value.toFixed(2)} ${unites[d.feature]}`) //généré par l'IA dans la partie mensuelle
                 .style("left", `${event.pageX+15}px `)
                 .style("top", `${event.pageY+15}px `)
                 .style("opacity", 0.7)
@@ -727,7 +819,8 @@ d3.csv("canton_meteo.csv").then(donnees =>{
     const mois = selectM.value;
 
     const moyenne = calamoyenne(donnees, cantonspid, mois);
-    dessinerSpider(moyenne);
+    const annuelle = calaannee(donnees, cantonspid);
+    dessinerSpider(moyenne, annuelle);
     }
 
     //donner un event aux selects
@@ -900,5 +993,30 @@ svg_2
 .on("mouseout", ()=>{
     tooltipHisto.style("opacity",0)
 })
+//légender la visualisation pour expliquer les couleurs
+const légende = svg_2.append("g")
+    .attr("transform", `translate(${largeur - 500}, ${hauteur - 160})`);
+
+    légende.append("rect")
+        .attr("width", 15)
+        .attr("height", 15)
+        .attr("fill", "steelblue");
+    légende.append("text")
+        .attr("x", 20)
+        .attr("y", 12)
+        .text("Au-dessus / égal à la normale établie entre 1991-2020")
+        .style("font-size", "12px")
+        .style("font-family", "arial");
+    légende.append("rect")
+        .attr("y", 20)
+        .attr("width", 15)
+        .attr("height", 15)
+        .attr("fill", "red");
+    légende.append("text")
+        .attr("x", 20)
+        .attr("y", 32)
+        .text("En dessous de la normale établie entre 1991-2020")
+        .style("font-size", "12px")
+        .style("font-family", "arial");
 };
 
