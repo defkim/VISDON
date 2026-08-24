@@ -337,10 +337,17 @@ const colorScale=d3.scaleLinear()
         .style("opacity", 0.7)
         .style("border-radius", "10px")
         .style("padding", "8px")
+        .style("cursor","pointer")
 
     })
     .on("mouseout", function (){
         tooltipCarte.style ("opacity", 0)
+    })
+    .on("click",(e,d)=>{
+        canton_selec = d.canton
+        selectC.value =d.canton
+        type_histo = "canton_sur_annee"
+        MAJ_histo()
     })
 
 
@@ -894,3 +901,4 @@ svg_2
     tooltipHisto.style("opacity",0)
 })
 };
+
