@@ -267,7 +267,7 @@ const colorScale=d3.scaleLinear()
     .domain([tempMinAnnee,0, tempMaxAnnee])
     .range(["#00cfff", "#f0f0f0", "#ff0000"])
 
-// création d'une légende pour les couleurs 
+ 
 
 
 
@@ -343,7 +343,75 @@ const colorScale=d3.scaleLinear()
         tooltipCarte.style ("opacity", 0)
     })
 
+
+
+//Légende carte 
+
+const defs = svg.append("defs")
+const gradient = defs
+.append("linearGradient")
+.attr("id", "degradeTemp")
+.attr("x1","0%")
+.attr("x2","100%")
+.attr("y1","0%")
+.attr("y2","0%")
+
+// position du 0° en fx de la couleur + 0% et 100%
+
+const positionZero = ((0-tempMinAnnee)/(tempMaxAnnee-tempMinAnnee))*100
+
+gradient.append("stop").attr("offset", "0%").attr("stop-color", "#00cfff")
+
+gradient.append("stop").attr("offset", `${positionZero}%`).attr("stop-color", "#f0f0f0")
+
+gradient.append("stop").attr("offset", "100%").attr("stop-color", "#ff0000")
+
+const largeurLegende = largeur - 2*marges
+
+//mise en page rect + text 
+
+svg
+.append("rect")
+.attr("x",marges)
+.attr("y", hauteur-30)
+.attr("width", largeurLegende)
+.attr("height",12)
+.style("fill", "url(#degradeTemp)")
+.attr("stroke","black")
+.attr("stroke-width", 0.5)
+
+svg
+.append("text")
+.attr("x", marges)
+.attr("y", hauteur)
+.text(`${tempMinAnnee.toFixed(1)}°C`)
+.style("font-size", "11px")
+.style("font-family","arial")
+
+svg
+.append("text")
+.attr("x", marges+(positionZero/100)*largeurLegende)
+.attr("y", hauteur)
+.attr("text-anchor", "middle")
+.text("0°c")
+.style("font-size", "11px")
+.style("font-family","arial")
+
+svg
+.append("text")
+.attr("x", marges+largeurLegende)
+.attr("y", hauteur)
+.attr("text-anchor", "end")
+.text(`${tempMaxAnnee.toFixed(1)}°c`)
+.style("font-size", "11px")
+.style("font-family","arial")
+
 };
+
+
+
+
+
 
 
 
