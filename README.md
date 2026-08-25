@@ -4,6 +4,8 @@ Dans un premier temps les données furent récupérés par l'intermédiaire de c
 
 Puis, dans l'optique d'améliorer notre histogramme, nous avons été inspirées par le site qui établissait des [moyennes météorologiques](https://www.meteosuisse.admin.ch/services-et-publications/applications/ext/climate-normtables.html#https%3A%2F%2Fservice.meteoswiss.ch%2Fproductbrowser%2FproductDisplay%2Fclimate-normtables%3Flang=fr&cg1.parameter=rre150m0&cg1.normalPeriod=1991-2020&cg1.language=fr&cg1.productName=climate-reports-normtables), sur une période donnée. En téléchargeant le fichier qui rapportait la moyenne des précipitations dans chaque canton, de 1991 à 2020, nous avons établi un fichier csv en essayant de reprendre les mêmes stations que celles du fichier canton_meteo.csv. Or à deux reprises, il nous a fallu prendre une station différente. Nous avons donc pris Sattel au lieu de Gersau et Riedholz à la place de Grenchen, puisque Gersau et Grenchen n'étaient pas mentionnées.
 
+Dans l'introduction des visualisations, nous avons également fait référence au [bilan climatologique 2025](https://www.meteosuisse.admin.ch/services-et-publications/publications/rapports-et-bulletins/2026/bulletin-climatologique-annee-2025.html) publié par l'Office fédéral météorologique et climatologique. Cela permet au lecteur de donner la possiblité de se renseigner avec plus de détails et donner du sens et un contexte pour expliquer ces visualisations.
+
 
 ## Présentation des données
 Les données finales se présentent sous forme de tableau dans un fichier csv : "canton_meteo.csv". Ce fichier de 9490 lignes est le produit de l'assemblage des 26 fichiers cantonaux. Il contient 16 colonnes :
