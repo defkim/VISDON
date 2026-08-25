@@ -62,9 +62,6 @@ L'histogramme représente les précipitations dans chaque canton en fonction du 
 
 Si dans la spiderchart les couleurs ne sont pas vraiment représentatives de la récpercussion des résultat émis, mais servent plus à la distinction des polygones formés ([image_spidercouleurs]), ce n'est pas le cas pour les deux autres visualisations. Dans la heatmap, le rouge est associé à la chaleur, [image_heatcouleurs], et par conséquent, le choix du rouge dans l'histogramme permet de perpuétuer cette vision, cf. [image_histocouleurs], comme le rouge apparaît en cas d'insuffisance pluviale, donc une terre plus sèche, plus chaude. 
 
-![image_heatcouleurs](HEAT_COULEURS.png)
-![image_spidercouleurs](SPIDER_COULEURS.png)
-![image_histocouleurs](HISTO_COULEURS.png)
 ![image_axes](spider_image_axe.png)
 ![image_problème](spider_problèmedonnées.png)
 ![image_sanscourbe](spider_sanscourbe.png)
@@ -72,6 +69,9 @@ Si dans la spiderchart les couleurs ne sont pas vraiment représentatives de la 
 ![image_couleur_hm](image_couleur_hm.png)
 ![image_tooltip_hm](image_tooltip_hm.png)
 ![image_histo](image_histo.png)
+![image_heatcouleurs](HEAT_COULEURS.png)
+![image_spidercouleurs](SPIDER_COULEURS.png)
+![image_histocouleurs](HISTO_COULEURS.png)
 
 
 ## Utilisation des IA génératives
