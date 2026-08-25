@@ -440,6 +440,7 @@ titre_SpiderChart.style.fontFamily = "arial"
 
 const labelCanton = document.createElement("span");
 labelCanton.innerHTML = "Canton : ";
+labelCanton.style.fontFamily = "arial";
 blocSpiderChart.appendChild(labelCanton);
 
 const selectC = document.createElement("select");
@@ -449,6 +450,7 @@ blocSpiderChart.appendChild(selectC);
 
 const labelMois = document.createElement("span");
 labelMois.innerHTML = "Mois : ";
+labelMois.style.fontFamily = "arial";
 blocSpiderChart.appendChild(labelMois);
 
 const selectM = document.createElement("select");
@@ -846,6 +848,7 @@ titre_histogramme.style.fontFamily = "arial";
 
 const labelMoisbis = document.createElement("span");
 labelMoisbis.innerHTML = "Mois : ";
+labelMoisbis.style.fontFamily = "arial";
 document.body.appendChild(labelMoisbis);
 
 const selectMbis = document.createElement("select");
