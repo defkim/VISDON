@@ -8,13 +8,16 @@ document.body.appendChild(titre)
 titre.innerHTML="Données météorologiques 2025"
 titre.style.textAlign="center"
 titre.style.fontFamily = "arial"
-let espace = document.createElement("br")
-document.body.appendChild(espace)
 
-//petite description du projet, à améliorer
+//petite description du projet
 let descri_visu = document.createElement("p")
 document.body.appendChild(descri_visu)
-descri_visu.innerHTML= "Découvrez les différentes données météorologiques à travers ces différentes visualisations ! Chaque graphe représente différentes informations permettant d'en savoir plus sur la météo suisse. Grâce aux différentes stations sélectionnées, vous pourrez vous tenir informés de ce que chaque canton a pu ressentir en terme de températures, de vent, tout comme le temps d'ensoleillement, ainsi que la pluie qui y a été relevée !"
+descri_visu.innerHTML= `Vous êtes intéressé.e.s par les données météorologiques suisses, et vous peinez à trouver certaines informations sur le <a href ="https://www.meteosuisse.admin.ch/services-et-publications/applications/valeurs-mesurees.html#param=messwerte-lufttemperatur-10min&station=DAV&table=false" target ="_blank">site officiel de MétéoSuisse</a> ? Ne paniquez pas, vous allez y arriver ! En attendant, profitez de cette page pour visualiser certaines données météorologiques recueillies en 2025. En choisissant une station météorologique par canton, nous vous offrons la possibilité d'observer pourquoi 2025 est qualifiée comme étant <i>la quatrième année la plus chaude depuis le début des mesures</i>, en reprenant les mots du <a href="https://www.meteosuisse.admin.ch/services-et-publications/publications/rapports-et-bulletins/2026/bulletin-climatologique-annee-2025.html" target="_blank">bulletin climatologique</a> publié par l'Office fédéral de météorologie et de climatologie MétéoSuisse. <br><br>Parcourez notre Heatmap pour découvrir les températures; notre Histogramme pour comparer les données concernant les précipitations, et en quoi diffèrent-elles des normales établies entre 1991 et 2020 ! Puis, notre Spiderchart vous permettra de compléter ces informations avec des mesures comme la vitesse du vent, mais aussi le temps d'ensoleillement, qui sont deux facteurs influençant notre perception sur le climat suisse, de par le ressenti ou la lumière associée au beau temps.`
+descri_visu.style.textAlign = "justify"
+descri_visu.style.fontFamily = "arial"
+
+let espace = document.createElement("br")
+document.body.appendChild(espace)
 
 // création bloc pour deux visu côte à côte plus joli ptetre
 let CoteCote = document.createElement("div")
