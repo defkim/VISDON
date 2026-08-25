@@ -102,6 +102,8 @@ Promise.all([
         d.pres = +d.pres
 
     })
+
+    donneesHistogramme = données_stations; //sinon le select de la heatmap n'est plus lié aux autres puisque tourne dans le vide
     
     remplirSelectCantons()
     MAJ_carte(input.value)
