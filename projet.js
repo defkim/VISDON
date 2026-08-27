@@ -269,7 +269,8 @@ d_station.forEach(d=>{
 
 //couleur des cantons en fonction de la température moyenne du jour choisi 
 const tempMinAnnee = d3.min(d_station, d => +d.tmin)
-        const tempMaxAnnee = d3.max(d_station, d => +d.tmax)
+const tempMaxAnnee = d3.max(d_station, d => +d.tmax)
+
 
 const colorScale=d3.scaleLinear()
     .domain([tempMinAnnee,0, tempMaxAnnee])
