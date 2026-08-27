@@ -328,6 +328,7 @@ const colorScale=d3.scaleLinear()
     .attr("stroke", "#a4a3a3")
     .attr("stroke-width",1)
     .attr("stroke-opacity", 0.30)
+    .style("cursor","pointer")
     .on("mouseover", function (e,d){
         tooltipCarte.html(
             "<b>Canton</b>:" + d.canton +
@@ -345,18 +346,22 @@ const colorScale=d3.scaleLinear()
         .style("opacity", 0.7)
         .style("border-radius", "10px")
         .style("padding", "8px")
-        .style("cursor","pointer")
+        
 
     })
     .on("mouseout", function (){
         tooltipCarte.style ("opacity", 0)
     })
-    .on("click",(e,d)=>{
+    .on("click",(e,d)=>{ //clic pour changer spiderchart
         canton_selec = d.canton
+        const mois = +input.value.split("-")[1]
         selectC.value =d.canton
-        type_histo = "canton_sur_annee"
-        MAJ_histo()
+        selectM.value = mois
+        const moyenne = calamoyenne(données_stations, d.canton, mois)
+        const annuelle = calaannee(données_stations, d.canton)
+        dessinerSpider(moyenne,annuelle)
     })
+    
 
 
 
