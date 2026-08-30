@@ -73,7 +73,6 @@ Si dans la spiderchart les couleurs ne sont pas vraiment représentatives de la 
 ![image_histo](image_histo.png)
 ![image_heatcouleurs](HEAT_COULEURS.png)
 ![image_spidercouleurs](SPIDER_COULEURS.png)
-![image_histocouleurs](HISTO_COULEURS.png)
 
 
 ## Utilisation des IA génératives
